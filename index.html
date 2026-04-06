@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Compass</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&display=swap');
+
+  :root {
+    --bg: #0a1628;
+    --surface: #0f2040;
+    --border: #1a3a5c;
+    --text: #e8f4f0;
+    --muted: #5a8a7a;
+    --accent: #00e5b4;
+    --accent-dim: rgba(0,229,180,0.12);
+    --build: #ff6b35;
+    --move: #ff3d7f;
+    --connect: #ffcc02;
+    --learn: #00e5b4;
+    --consume: #a78bfa;
+    --explore: #06d6a0;
+    --stillness: #74c7ec;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+
+  .app { width: 100%; max-width: 420px; }
+
+  .header { text-align: center; margin-bottom: 40px; }
+  .header h1 { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; }
+  .header p { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 6px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .fade-in { animation: fadeIn 0.28s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  .setup-intro { font-family:'Playfair Display',serif; font-style:italic; font-size:1rem; color:var(--muted); text-align:center; margin-bottom:28px; line-height:1.6; }
+  .day-row { display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--border); }
+  .day-label { font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); width:32px; flex-shrink:0; }
+  .day-select { flex:1; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:0.75rem; padding:8px 10px; appearance:none; cursor:pointer; }
+  .day-select:focus { outline:1px solid var(--accent); }
+  .setup-btn { width:100%; margin-top:28px; padding:16px; background:var(--accent); color:#0a1628; border:none; font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; transition:opacity 0.15s; }
+  .setup-btn:hover { opacity:0.85; }
+
+  .progress { display:flex; gap:6px; justify-content:center; margin-bottom:36px; }
+  .dot { width:6px; height:6px; border-radius:50%; background:var(--border); transition:background 0.2s; }
+  .dot.active { background:var(--accent); }
+  .dot.done { background:var(--muted); }
+  .q-label { font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
+  .q-text { font-family:'Playfair Display',serif; font-size:1.3rem; line-height:1.4; margin-bottom:16px; }
+  .q-sub { font-size:0.65rem; color:var(--muted); margin-bottom:12px; letter-spacing:0.04em; }
+  .options { display:flex; flex-direction:column; gap:6px; }
+  .option-btn { padding:12px 16px; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:0.75rem; text-align:left; cursor:pointer; letter-spacing:0.04em; transition:all 0.12s; }
+  .option-btn:hover { border-color:var(--accent); background:var(--accent-dim); }
+  .option-btn.selected { border-color:var(--accent); background:var(--accent-dim); color:var(--accent); }
+  .option-btn.selected::before { content:'→ '; }
+  .done-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .done-btn { padding:10px 12px; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:0.7rem; text-align:center; cursor:pointer; transition:all 0.12s; }
+  .done-btn.selected { opacity:0.4; text-decoration:line-through; }
+  .next-btn { width:100%; margin-top:20px; padding:14px; background:transparent; border:1px solid var(--accent); color:var(--accent); font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; transition:all 0.15s; }
+  .next-btn:hover { background:var(--accent-dim); }
+
+  .result-wrap { text-align:center; padding:8px 0 24px; }
+  .result-dot { width:12px; height:12px; border-radius:50%; margin:0 auto 18px; }
+  .result-name { font-family:'Playfair Display',serif; font-size:3rem; font-weight:700; letter-spacing:-0.03em; line-height:1; margin-bottom:8px; }
+  .result-note { font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:28px; min-height:16px; }
+  .result-divider { width:40px; height:1px; background:var(--border); margin:0 auto 24px; }
+  .result-activity { font-family:'Playfair Display',serif; font-style:italic; font-size:1.2rem; line-height:1.5; margin-bottom:28px; padding:0 8px; min-height:60px; }
+  .daily-strip { display:flex; gap:8px; justify-content:center; margin-bottom:28px; }
+  .daily-pill { padding:6px 12px; border:1px solid var(--border); font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); }
+  .daily-pill span { color:var(--text); margin-left:4px; }
+  .result-actions { display:flex; gap:8px; margin-bottom:8px; }
+  .action-btn { flex:1; padding:13px; background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:all 0.15s; }
+  .action-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .action-btn.primary { border-color:var(--accent); color:var(--accent); }
+  .action-btn.primary:hover { background:var(--accent-dim); }
+
+  .add-prompt { margin-top:16px; padding:16px; border:1px dashed var(--border); }
+  .add-prompt p { font-size:0.68rem; color:var(--muted); margin-bottom:12px; letter-spacing:0.04em; text-align:center; }
+  .add-input { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:0.78rem; padding:10px 12px; margin-bottom:8px; }
+  .add-input:focus { outline:1px solid var(--accent); }
+  .add-input::placeholder { color:var(--muted); }
+  .add-actions { display:flex; gap:6px; }
+  .add-save-btn { flex:1; padding:10px; background:var(--accent); color:#0a1628; border:none; font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; }
+  .add-cancel-btn { padding:10px 14px; background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem; cursor:pointer; }
+  .add-status { font-size:0.62rem; color:var(--accent); letter-spacing:0.08em; margin-top:8px; min-height:16px; text-align:center; }
+
+  .settings-link { text-align:center; margin-top:20px; display:flex; gap:16px; justify-content:center; }
+  .settings-link button { background:none; border:none; color:var(--muted); font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; text-decoration:underline; }
+  .settings-link button:hover { color:var(--accent); }
+
+  .manage-header { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+  .back-btn { background:none; border:none; color:var(--muted); font-family:'DM Mono',monospace; font-size:0.7rem; cursor:pointer; padding:0; }
+  .back-btn:hover { color:var(--accent); }
+  .manage-title { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:400; }
+  .manage-area-block { margin-bottom:28px; }
+  .manage-area-label { font-size:0.62rem; letter-spacing:0.16em; text-transform:uppercase; margin-bottom:8px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+  .manage-item { display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid rgba(26,58,92,0.5); }
+  .manage-item-text { flex:1; font-size:0.7rem; color:var(--text); line-height:1.4; }
+  .manage-item-energy { font-size:0.55rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); flex-shrink:0; width:44px; }
+  .manage-delete-btn { background:none; border:none; color:var(--border); cursor:pointer; font-size:1rem; padding:2px 6px; flex-shrink:0; transition:color 0.15s; }
+  .manage-delete-btn:hover { color:#ff3d7f; }
+  .manage-custom-tag { font-size:0.5rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); border:1px solid var(--accent); padding:1px 4px; flex-shrink:0; }
+  .manage-empty { font-size:0.68rem; color:var(--muted); padding:12px 0; font-style:italic; }
+
+  .loading { text-align:center; padding:40px 0; }
+  .loading p { font-size:0.7rem; color:var(--muted); letter-spacing:0.1em; animation:pulse 1.4s ease infinite; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Compass</h1>
+    <p>What next</p>
+  </div>
+
+  <div id="screen-loading" class="screen active">
+    <div class="loading"><p>Loading...</p></div>
+  </div>
+
+  <div id="screen-setup" class="screen">
+    <p class="setup-intro">Set your priority for each day. You'll be asked every time you open the app.</p>
+    <div id="day-grid"></div>
+    <button class="setup-btn" onclick="saveSetup()">Let's go</button>
+  </div>
+
+  <div id="screen-q1" class="screen">
+    <div class="progress"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="q-label">01 / 03</div>
+    <div class="q-text">How's your energy right now?</div>
+    <div class="options">
+      <button class="option-btn" onclick="selectQ1(event,'low')">Low. I need something gentle.</button>
+      <button class="option-btn" onclick="selectQ1(event,'medium')">Medium. I can push a little.</button>
+      <button class="option-btn" onclick="selectQ1(event,'high')">High. I'm ready for something real.</button>
+    </div>
+  </div>
+
+  <div id="screen-q2" class="screen">
+    <div class="progress"><div class="dot done"></div><div class="dot active"></div><div class="dot"></div></div>
+    <div class="q-label">02 / 03</div>
+    <div class="q-text">What have you already done today?</div>
+    <p class="q-sub">Tap anything that applies.</p>
+    <div class="done-grid" id="done-grid"></div>
+    <button class="next-btn" onclick="goToQ3()">Continue</button>
+  </div>
+
+  <div id="screen-q3" class="screen">
+    <div class="progress"><div class="dot done"></div><div class="dot done"></div><div class="dot active"></div></div>
+    <div class="q-label">03 / 03</div>
+    <div class="q-text">Today's priority is <em id="q3-priority"></em>. Does that feel right?</div>
+    <div class="options">
+      <button class="option-btn" onclick="selectQ3(event,'yes')">Yes, go with that.</button>
+      <button class="option-btn" onclick="selectQ3(event,'no')">No, let me choose.</button>
+    </div>
+    <div id="override-options" style="display:none;margin-top:12px;">
+      <div class="options" id="override-list"></div>
+    </div>
+  </div>
+
+  <div id="screen-result" class="screen">
+    <div class="result-wrap" id="result-wrap"></div>
+    <div id="add-prompt-wrap"></div>
+    <div class="settings-link">
+      <button onclick="goToSetup()">Change priorities</button>
+      <button onclick="goToManage()">Manage activities</button>
+    </div>
+  </div>
+
+  <div id="screen-manage" class="screen">
+    <div class="manage-header">
+      <button class="back-btn" onclick="showScreen('result')">← Back</button>
+      <div class="manage-title">Your activities</div>
+    </div>
+    <div id="manage-content"></div>
+  </div>
+</div>
+
+<script>
+const AREAS = [
+  {id:'build',    label:'Build',    color:'var(--build)'},
+  {id:'move',     label:'Move',     color:'var(--move)'},
+  {id:'connect',  label:'Connect',  color:'var(--connect)'},
+  {id:'learn',    label:'Learn',    color:'var(--learn)'},
+  {id:'consume',  label:'Consume',  color:'var(--consume)'},
+  {id:'explore',  label:'Explore',  color:'var(--explore)'},
+  {id:'stillness',label:'Stillness',color:'var(--stillness)'}
+];
+
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DEFAULT_PRIORITIES = ['build','build','build','connect','learn','explore','stillness'];
+
+const DEFAULT_ACTIVITIES = {
+  build:{
+    low:   ['Tidy up a doc or file you\'ve been meaning to sort','Review a project and write one honest note to yourself'],
+    medium:['Work on a client deliverable for 90 minutes','Write something, even a few paragraphs','Develop a small idea into a plan'],
+    high:  ['Deep work block, two hours, no interruptions','Build or ship something concrete','Write a proper draft of something that matters']
+  },
+  move:{
+    low:   ['A slow walk, no destination','Stretch for 15 minutes','Get outside, even briefly'],
+    medium:['A solid walk with a podcast','Cycle somewhere','Swim or gym at your own pace'],
+    high:  ['Run','Hard gym session','Long hike or bike ride']
+  },
+  connect:{
+    low:   ['Send a message to someone you\'ve been meaning to reach','Voice note a friend','Browse and reach out to one person on LinkedIn'],
+    medium:['Call someone properly, not just a check-in','Suggest a plan to someone for this week','Go somewhere you might bump into people'],
+    high:  ['Make a dinner plan for tonight','Reach out to three people you\'ve lost touch with','Go to an event or somewhere social']
+  },
+  learn:{
+    low:   ['20 minutes of Russian, no pressure','Read one article slowly and take a note','Watch a lecture or talk you\'ve saved'],
+    medium:['Russian for 45 minutes with real focus','Read a chapter and write a short reflection','Go deep on one topic you\'re curious about'],
+    high:  ['A proper study session, two hours, one subject','Work through something hard and uncomfortable','Research something and produce a summary']
+  },
+  consume:{
+    low:   ['Read history for an hour','A documentary you\'ve been saving','A podcast walk'],
+    medium:['Read for two hours uninterrupted','Watch something genuinely good','Work through a long-form article or essay'],
+    high:  ['Finish a book','A film you\'ve been putting off','A proper reading afternoon']
+  },
+  explore:{
+    low:   ['Walk a street you don\'t usually take','Find one new café or spot nearby','Look up something happening in the city this week'],
+    medium:['Go to a neighbourhood you haven\'t visited in a while','Visit a gallery, market, or local event','Have lunch somewhere completely new'],
+    high:  ['A proper day out with no agenda','Drive somewhere and see what you find','Plan a short trip for next week']
+  },
+  stillness:{
+    low:   ['Sit with a coffee and do nothing for 20 minutes','A short meditation, even 10 minutes','Journal, no prompt needed'],
+    medium:['A longer meditation sit, 20-30 minutes','Write freely in a journal for 30 minutes','Lie down and listen to music with your eyes closed'],
+    high:  ['A full morning of quiet and slowness','A long bath with a book and nowhere to be','A walk with no podcast, just thinking']
+  }
+};
+
+let customActivities = {};
+
+let state = {
+  priorities: [...DEFAULT_PRIORITIES],
+  energy: null,
+  doneSections: [],
+  finalArea: null,
+  currentActivity: null,
+  shuffleCount: 0
+};
+
+async function loadCustomActivities() {
+  try {
+    const r = await window.storage.get('compass-custom-v1');
+    if (r && r.value) customActivities = JSON.parse(r.value);
+  } catch(e) { customActivities = {}; }
+  AREAS.forEach(a => {
+    if (!customActivities[a.id]) customActivities[a.id] = {low:[],medium:[],high:[]};
+    ['low','medium','high'].forEach(l => {
+      if (!customActivities[a.id][l]) customActivities[a.id][l] = [];
+    });
+  });
+}
+
+async function saveCustomActivities() {
+  try { await window.storage.set('compass-custom-v1', JSON.stringify(customActivities)); } catch(e) {}
+}
+
+async function init() {
+  await loadCustomActivities();
+  buildSetup();
+  showScreen('setup');
+}
+
+function buildSetup() {
+  const grid = document.getElementById('day-grid');
+  grid.innerHTML = '';
+  DAYS.forEach((day, i) => {
+    const row = document.createElement('div');
+    row.className = 'day-row';
+    const lbl = document.createElement('div');
+    lbl.className = 'day-label';
+    lbl.textContent = day.slice(0,3);
+    const sel = document.createElement('select');
+    sel.className = 'day-select';
+    AREAS.forEach(a => {
+      const opt = document.createElement('option');
+      opt.value = a.id;
+      opt.textContent = a.label;
+      if (a.id === state.priorities[i]) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    row.appendChild(lbl);
+    row.appendChild(sel);
+    grid.appendChild(row);
+  });
+}
+
+function saveSetup() {
+  document.querySelectorAll('.day-select').forEach((s,i) => { state.priorities[i] = s.value; });
+  showScreen('q1');
+}
+
+function goToSetup() { buildSetup(); showScreen('setup'); }
+
+function selectQ1(e, energy) {
+  state.energy = energy;
+  document.querySelectorAll('#screen-q1 .option-btn').forEach(b => b.classList.remove('selected'));
+  e.target.classList.add('selected');
+  setTimeout(() => { buildDoneGrid(); showScreen('q2'); }, 280);
+}
+
+function buildDoneGrid() {
+  const grid = document.getElementById('done-grid');
+  grid.innerHTML = '';
+  state.doneSections = [];
+  AREAS.forEach(a => {
+    const btn = document.createElement('button');
+    btn.className = 'done-btn';
+    btn.textContent = a.label;
+    btn.onclick = () => {
+      btn.classList.toggle('selected');
+      if (btn.classList.contains('selected')) state.doneSections.push(a.id);
+      else state.doneSections = state.doneSections.filter(x => x !== a.id);
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function goToQ3() {
+  const idx = (new Date().getDay() + 6) % 7;
+  const area = AREAS.find(a => a.id === state.priorities[idx]);
+  document.getElementById('q3-priority').textContent = area.label;
+  document.getElementById('override-options').style.display = 'none';
+  showScreen('q3');
+}
+
+function selectQ3(e, choice) {
+  document.querySelectorAll('#screen-q3 .option-btn').forEach(b => b.classList.remove('selected'));
+  e.target.classList.add('selected');
+  if (choice === 'yes') {
+    const idx = (new Date().getDay() + 6) % 7;
+    state.finalArea = state.priorities[idx];
+    setTimeout(showResult, 280);
+  } else {
+    const div = document.getElementById('override-options');
+    const list = document.getElementById('override-list');
+    list.innerHTML = '';
+    AREAS.forEach(a => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = a.label;
+      btn.onclick = () => { state.finalArea = a.id; setTimeout(showResult, 280); };
+      list.appendChild(btn);
+    });
+    div.style.display = 'block';
+  }
+}
+
+function getAllActivities(areaId, energy) {
+  const defaults = DEFAULT_ACTIVITIES[areaId][energy] || [];
+  const customs  = (customActivities[areaId] && customActivities[areaId][energy]) || [];
+  return [
+    ...defaults.map(t => ({text:t, custom:false})),
+    ...customs.map(c => ({text:c.text, custom:true, id:c.id}))
+  ];
+}
+
+function showResult() {
+  let areaId = state.finalArea;
+  let overrideNote = '';
+  const HIGH_DEMAND = ['build','learn'];
+  const LOW_DEMAND  = ['stillness','consume','explore'];
+
+  if (state.energy === 'low' && HIGH_DEMAND.includes(areaId)) {
+    const available = LOW_DEMAND.filter(x => !state.doneSections.includes(x));
+    if (available.length) { areaId = available[0]; overrideNote = 'Priority adjusted for your energy level'; }
+  }
+
+  state.finalArea = areaId;
+  const pool = getAllActivities(areaId, state.energy);
+  const initialIdx = pool.length ? Math.floor(Math.random() * pool.length) : 0;
+  state.shuffleCount = initialIdx;
+  const picked = pool[initialIdx];
+  state.currentActivity = picked ? picked.text : 'Take a breath and decide.';
+  renderResult(areaId, overrideNote);
+  showScreen('result');
+}
+
+function renderResult(areaId, overrideNote) {
+  const area = AREAS.find(a => a.id === areaId);
+  document.getElementById('result-wrap').innerHTML = `
+    <div class="result-dot" style="background:${area.color}"></div>
+    <div class="result-name" style="color:${area.color}">${area.label}</div>
+    <div class="result-note">${overrideNote || ''}</div>
+    <div class="result-divider"></div>
+    <div class="result-activity" id="result-activity-text">${state.currentActivity}</div>
+    <div class="daily-strip">
+      <div class="daily-pill">Move<span>daily</span></div>
+      <div class="daily-pill">Stillness<span>daily</span></div>
+    </div>
+    <div class="result-actions">
+      <button class="action-btn" onclick="startOver()">Start over</button>
+      <button class="action-btn primary" id="shuffle-btn" onclick="shuffleActivity()">Different idea</button>
+    </div>
+  `;
+  document.getElementById('add-prompt-wrap').innerHTML = '';
+}
+
+function shuffleActivity() {
+  const pool = getAllActivities(state.finalArea, state.energy);
+  if (!pool.length) return;
+  state.shuffleCount = (state.shuffleCount + 1) % pool.length;
+  const picked = pool[state.shuffleCount];
+  state.currentActivity = picked.text;
+  document.getElementById('result-activity-text').textContent = picked.text;
+}
+
+function showAddPrompt() {
+  document.getElementById('add-prompt-wrap').innerHTML = `
+    <div class="add-prompt">
+      <p>Nothing feels right? Add your own.</p>
+      <input class="add-input" id="add-input" placeholder="What do you actually want to do?" maxlength="120" />
+      <div class="add-actions">
+        <button class="add-save-btn" onclick="saveCustomActivity()">Save & use it</button>
+        <button class="add-cancel-btn" onclick="cancelAdd()">Cancel</button>
+      </div>
+      <div class="add-status" id="add-status"></div>
+    </div>
+  `;
+}
+
+async function saveCustomActivity() {
+  const input = document.getElementById('add-input');
+  const text = input ? input.value.trim() : '';
+  if (!text) return;
+  const statusEl = document.getElementById('add-status');
+  if (statusEl) statusEl.textContent = 'Classifying...';
+
+  let level = 'medium';
+  try { level = await classifyActivity(text, state.finalArea); } catch(e) {}
+
+  const id = Date.now().toString();
+  customActivities[state.finalArea][level].push({text, id});
+  await saveCustomActivities();
+
+  state.currentActivity = text;
+  const actEl = document.getElementById('result-activity-text');
+  if (actEl) actEl.textContent = text;
+  document.getElementById('add-prompt-wrap').innerHTML = '';
+  const btn = document.getElementById('shuffle-btn');
+  if (btn) btn.style.display = '';
+}
+
+function cancelAdd() {
+  document.getElementById('add-prompt-wrap').innerHTML = '';
+  const btn = document.getElementById('shuffle-btn');
+  if (btn) btn.style.display = '';
+}
+
+async function classifyActivity(text, areaId) {
+  const area = AREAS.find(a => a.id === areaId);
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: 'Classify an activity by energy level. Reply with ONLY one word: low, medium, or high. low=gentle/restorative, medium=engaged but not draining, high=demanding/requires real energy.',
+      messages: [{role:'user', content:`Area: ${area.label}\nActivity: ${text}`}]
+    })
+  });
+  const data = await resp.json();
+  const level = data.content?.[0]?.text?.trim().toLowerCase();
+  return ['low','medium','high'].includes(level) ? level : 'medium';
+}
+
+function startOver() {
+  state.energy = null; state.doneSections = []; state.finalArea = null;
+  state.currentActivity = null; state.shuffleCount = 0;
+  buildSetup();
+  showScreen('setup');
+}
+
+function goToManage() { buildManage(); showScreen('manage'); }
+
+function buildManage() {
+  const content = document.getElementById('manage-content');
+  content.innerHTML = '';
+  AREAS.forEach(area => {
+    const block = document.createElement('div');
+    block.className = 'manage-area-block';
+    const lbl = document.createElement('div');
+    lbl.className = 'manage-area-label';
+    lbl.style.color = area.color;
+    lbl.textContent = area.label;
+    block.appendChild(lbl);
+
+    let hasCustom = false;
+    ['low','medium','high'].forEach(level => {
+      (customActivities[area.id][level] || []).forEach(act => {
+        hasCustom = true;
+        const item = document.createElement('div');
+        item.className = 'manage-item';
+        item.innerHTML = `
+          <div class="manage-item-text">${act.text}</div>
+          <div class="manage-item-energy">${level}</div>
+          <span class="manage-custom-tag">custom</span>
+          <button class="manage-delete-btn" data-area="${area.id}" data-level="${level}" data-id="${act.id}">×</button>
+        `;
+        block.appendChild(item);
+      });
+    });
+
+    if (!hasCustom) {
+      const empty = document.createElement('div');
+      empty.className = 'manage-empty';
+      empty.textContent = 'No custom activities yet.';
+      block.appendChild(empty);
+    }
+    content.appendChild(block);
+  });
+
+  content.onclick = async (e) => {
+    if (!e.target.classList.contains('manage-delete-btn')) return;
+    const {area, level, id} = e.target.dataset;
+    customActivities[area][level] = customActivities[area][level].filter(a => a.id !== id);
+    await saveCustomActivities();
+    buildManage();
+  };
+}
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + name);
+  el.classList.add('active');
+  el.classList.remove('fade-in');
+  void el.offsetWidth;
+  el.classList.add('fade-in');
+}
+
+init();
+</script>
+</body>
+</html>
