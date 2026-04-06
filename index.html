@@ -245,7 +245,6 @@ const DEFAULT_ACTIVITIES = {
 };
 
 let customActivities = {};
-
 let state = {
   priorities: [...DEFAULT_PRIORITIES],
   energy: null,
@@ -407,6 +406,7 @@ function renderResult(areaId, overrideNote) {
     </div>
     <div class="result-actions">
       <button class="action-btn" onclick="startOver()">Start over</button>
+      <button class="action-btn" onclick="showAddPrompt()">Add activity</button>
       <button class="action-btn primary" id="shuffle-btn" onclick="shuffleActivity()">Different idea</button>
     </div>
   `;
@@ -420,6 +420,7 @@ function shuffleActivity() {
   const picked = pool[state.shuffleCount];
   state.currentActivity = picked.text;
   document.getElementById('result-activity-text').textContent = picked.text;
+  if (state.shuffleCount === 0) showAddPrompt();
 }
 
 let pendingLevel = 'medium';
@@ -454,23 +455,17 @@ function saveCustomActivity() {
   const input = document.getElementById('add-input');
   const text = input ? input.value.trim() : '';
   if (!text) return;
-
   const id = Date.now().toString();
   customActivities[state.finalArea][pendingLevel].push({text, id});
   saveCustomActivities();
-
   state.currentActivity = text;
   const actEl = document.getElementById('result-activity-text');
   if (actEl) actEl.textContent = text;
   document.getElementById('add-prompt-wrap').innerHTML = '';
-  const btn = document.getElementById('shuffle-btn');
-  if (btn) btn.style.display = '';
 }
 
 function cancelAdd() {
   document.getElementById('add-prompt-wrap').innerHTML = '';
-  const btn = document.getElementById('shuffle-btn');
-  if (btn) btn.style.display = '';
 }
 
 function startOver() {
