@@ -98,6 +98,8 @@
   .add-save-btn { flex:1; padding:10px; background:var(--accent); color:#0a1628; border:none; font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; }
   .add-cancel-btn { padding:10px 14px; background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem; cursor:pointer; }
   .add-status { font-size:0.62rem; color:var(--accent); letter-spacing:0.08em; margin-top:8px; min-height:16px; text-align:center; }
+  .energy-pick-btn { flex:1; padding:8px; background:var(--surface); border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:all 0.12s; }
+  .energy-pick-btn.energy-selected { border-color:var(--accent); color:var(--accent); background:var(--accent-dim); }
 
   .settings-link { text-align:center; margin-top:20px; display:flex; gap:16px; justify-content:center; }
   .settings-link button { background:none; border:none; color:var(--muted); font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; text-decoration:underline; }
@@ -253,10 +255,10 @@ let state = {
   shuffleCount: 0
 };
 
-async function loadCustomActivities() {
+function loadCustomActivities() {
   try {
-    const r = await window.storage.get('compass-custom-v1');
-    if (r && r.value) customActivities = JSON.parse(r.value);
+    const saved = localStorage.getItem('compass-custom-v1');
+    if (saved) customActivities = JSON.parse(saved);
   } catch(e) { customActivities = {}; }
   AREAS.forEach(a => {
     if (!customActivities[a.id]) customActivities[a.id] = {low:[],medium:[],high:[]};
@@ -266,12 +268,12 @@ async function loadCustomActivities() {
   });
 }
 
-async function saveCustomActivities() {
-  try { await window.storage.set('compass-custom-v1', JSON.stringify(customActivities)); } catch(e) {}
+function saveCustomActivities() {
+  try { localStorage.setItem('compass-custom-v1', JSON.stringify(customActivities)); } catch(e) {}
 }
 
-async function init() {
-  await loadCustomActivities();
+function init() {
+  loadCustomActivities();
   buildSetup();
   showScreen('setup');
 }
@@ -420,33 +422,42 @@ function shuffleActivity() {
   document.getElementById('result-activity-text').textContent = picked.text;
 }
 
+let pendingLevel = 'medium';
+
 function showAddPrompt() {
+  pendingLevel = 'medium';
   document.getElementById('add-prompt-wrap').innerHTML = `
     <div class="add-prompt">
       <p>Nothing feels right? Add your own.</p>
       <input class="add-input" id="add-input" placeholder="What do you actually want to do?" maxlength="120" />
+      <div style="font-size:0.62rem;color:var(--muted);margin-bottom:8px;letter-spacing:0.08em;">Energy level</div>
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <button class="energy-pick-btn" onclick="selectEnergy(event,'low')">Low</button>
+        <button class="energy-pick-btn energy-selected" onclick="selectEnergy(event,'medium')">Medium</button>
+        <button class="energy-pick-btn" onclick="selectEnergy(event,'high')">High</button>
+      </div>
       <div class="add-actions">
         <button class="add-save-btn" onclick="saveCustomActivity()">Save & use it</button>
         <button class="add-cancel-btn" onclick="cancelAdd()">Cancel</button>
       </div>
-      <div class="add-status" id="add-status"></div>
     </div>
   `;
 }
 
-async function saveCustomActivity() {
+function selectEnergy(e, level) {
+  pendingLevel = level;
+  document.querySelectorAll('.energy-pick-btn').forEach(b => b.classList.remove('energy-selected'));
+  e.target.classList.add('energy-selected');
+}
+
+function saveCustomActivity() {
   const input = document.getElementById('add-input');
   const text = input ? input.value.trim() : '';
   if (!text) return;
-  const statusEl = document.getElementById('add-status');
-  if (statusEl) statusEl.textContent = 'Classifying...';
-
-  let level = 'medium';
-  try { level = await classifyActivity(text, state.finalArea); } catch(e) {}
 
   const id = Date.now().toString();
-  customActivities[state.finalArea][level].push({text, id});
-  await saveCustomActivities();
+  customActivities[state.finalArea][pendingLevel].push({text, id});
+  saveCustomActivities();
 
   state.currentActivity = text;
   const actEl = document.getElementById('result-activity-text');
@@ -460,23 +471,6 @@ function cancelAdd() {
   document.getElementById('add-prompt-wrap').innerHTML = '';
   const btn = document.getElementById('shuffle-btn');
   if (btn) btn.style.display = '';
-}
-
-async function classifyActivity(text, areaId) {
-  const area = AREAS.find(a => a.id === areaId);
-  const resp = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      system: 'Classify an activity by energy level. Reply with ONLY one word: low, medium, or high. low=gentle/restorative, medium=engaged but not draining, high=demanding/requires real energy.',
-      messages: [{role:'user', content:`Area: ${area.label}\nActivity: ${text}`}]
-    })
-  });
-  const data = await resp.json();
-  const level = data.content?.[0]?.text?.trim().toLowerCase();
-  return ['low','medium','high'].includes(level) ? level : 'medium';
 }
 
 function startOver() {
@@ -525,11 +519,11 @@ function buildManage() {
     content.appendChild(block);
   });
 
-  content.onclick = async (e) => {
+  content.onclick = (e) => {
     if (!e.target.classList.contains('manage-delete-btn')) return;
     const {area, level, id} = e.target.dataset;
     customActivities[area][level] = customActivities[area][level].filter(a => a.id !== id);
-    await saveCustomActivities();
+    saveCustomActivities();
     buildManage();
   };
 }
