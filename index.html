@@ -5,23 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Compass</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
   :root {
-    --bg: #0a1628;
-    --surface: #0f2040;
-    --border: #1a3a5c;
-    --text: #e8f4f0;
-    --muted: #5a8a7a;
-    --accent: #00e5b4;
-    --accent-dim: rgba(0,229,180,0.12);
-    --build: #ff6b35;
-    --move: #ff3d7f;
-    --connect: #ffcc02;
-    --learn: #00e5b4;
-    --consume: #a78bfa;
-    --explore: #06d6a0;
-    --stillness: #74c7ec;
+    --bg: #FDF6EE;
+    --surface: #FFFFFF;
+    --primary: #FF6040;
+    --text: #1C1C2E;
+    --muted: #9B9BAA;
+    --border: #EDE5DB;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,570 +21,568 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Mono', monospace;
+    font-family: 'Nunito', sans-serif;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px 16px;
+    padding: 32px 20px;
   }
 
-  .app { width: 100%; max-width: 420px; }
+  .app { width: 100%; max-width: 380px; }
 
   .header { text-align: center; margin-bottom: 40px; }
-  .header h1 { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; }
-  .header p { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 6px; }
-  .header-version { font-size: 0.55rem; color: var(--border); letter-spacing: 0.1em; margin-top: 4px; }
+  .header h1 { font-size: 2.2rem; font-weight: 900; color: var(--primary); letter-spacing: -0.02em; }
+  .version { font-size: 0.6rem; color: var(--border); margin-top: 2px; letter-spacing: 0.05em; }
 
   .screen { display: none; }
   .screen.active { display: block; }
-  .fade-in { animation: fadeIn 0.28s ease; }
-  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  .fade-in { animation: fadeUp 0.3s ease forwards; }
 
-  .setup-intro { font-family:'Playfair Display',serif; font-style:italic; font-size:1rem; color:var(--muted); text-align:center; margin-bottom:28px; line-height:1.6; }
-  .day-row { display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--border); }
-  .day-label { font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); width:32px; flex-shrink:0; }
-  .day-select { flex:1; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:0.75rem; padding:8px 10px; appearance:none; cursor:pointer; }
-  .day-select:focus { outline:1px solid var(--accent); }
-  .setup-btn { width:100%; margin-top:28px; padding:16px; background:var(--accent); color:#0a1628; border:none; font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; transition:opacity 0.15s; }
-  .setup-btn:hover { opacity:0.85; }
+  /* ── Buttons ── */
+  .btn { width: 100%; padding: 17px; border: none; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: transform 0.1s, opacity 0.15s; }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-outline { background: transparent; color: var(--muted); border: 2.5px solid var(--border); }
+  .btn-outline:hover { border-color: var(--muted); color: var(--text); }
+  .btn + .btn { margin-top: 10px; }
+  .btn-ghost { background: none; border: none; color: var(--muted); font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; padding: 8px 4px; }
+  .btn-ghost:hover { color: var(--text); }
 
-  .progress { display:flex; gap:6px; justify-content:center; margin-bottom:36px; }
-  .dot { width:6px; height:6px; border-radius:50%; background:var(--border); transition:background 0.2s; }
-  .dot.active { background:var(--accent); }
-  .dot.done { background:var(--muted); }
-  .q-label { font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
-  .q-text { font-family:'Playfair Display',serif; font-size:1.3rem; line-height:1.4; margin-bottom:16px; }
-  .q-sub { font-size:0.65rem; color:var(--muted); margin-bottom:12px; letter-spacing:0.04em; }
-  .options { display:flex; flex-direction:column; gap:6px; }
-  .option-btn { padding:12px 16px; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:0.75rem; text-align:left; cursor:pointer; letter-spacing:0.04em; transition:all 0.12s; }
-  .option-btn:hover { border-color:var(--accent); background:var(--accent-dim); }
-  .option-btn.selected { border-color:var(--accent); background:var(--accent-dim); color:var(--accent); }
-  .option-btn.selected::before { content:'→ '; }
-  .done-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
-  .done-btn { padding:10px 12px; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:0.7rem; text-align:center; cursor:pointer; transition:all 0.12s; }
-  .done-btn.selected { opacity:0.4; text-decoration:line-through; }
-  .next-btn { width:100%; margin-top:20px; padding:14px; background:transparent; border:1px solid var(--accent); color:var(--accent); font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; transition:all 0.15s; }
-  .next-btn:hover { background:var(--accent-dim); }
+  /* ── Setup ── */
+  .screen-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; line-height: 1.25; }
+  .screen-sub { font-size: 0.88rem; color: var(--muted); margin-bottom: 28px; line-height: 1.6; font-weight: 600; }
+  .day-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .day-label { font-size: 0.7rem; font-weight: 800; color: var(--muted); width: 36px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .day-select { flex: 1; background: var(--surface); border: 2px solid var(--border); color: var(--text); font-family: 'Nunito', sans-serif; font-size: 0.9rem; font-weight: 700; padding: 8px 12px; border-radius: 12px; appearance: none; cursor: pointer; }
+  .day-select:focus { outline: none; border-color: var(--primary); }
 
-  /* Result screen */
-  .result-card { padding:18px; border:1px solid var(--border); margin-bottom:8px; }
-  .result-card-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-  .result-card-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-  .result-card-name { font-size:0.62rem; letter-spacing:0.16em; text-transform:uppercase; }
-  .result-card-badge { font-size:0.5rem; letter-spacing:0.1em; border:1px solid var(--border); color:var(--muted); padding:1px 5px; margin-left:auto; }
-  .result-card-activity { font-family:'Playfair Display',serif; font-style:italic; font-size:1.1rem; line-height:1.5; margin-bottom:12px; }
-  .result-card.primary .result-card-activity { font-size:1.25rem; }
-  .result-card-note { font-size:0.6rem; color:var(--muted); letter-spacing:0.08em; margin-bottom:10px; }
-  .shuffle-btn { background:none; border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; padding:6px 10px; cursor:pointer; transition:all 0.12s; }
-  .shuffle-btn:hover { border-color:var(--accent); color:var(--accent); }
+  /* ── Check-in ── */
+  .checkin-day { font-size: 0.78rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+  .area-chips { display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
+  .area-chip { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: var(--surface); border-radius: 16px; border: 2.5px solid transparent; cursor: pointer; transition: all 0.15s; user-select: none; }
+  .chip-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .chip-label { font-size: 1rem; font-weight: 700; flex: 1; color: var(--text); }
+  .chip-check { font-size: 1rem; font-weight: 900; opacity: 0; transition: opacity 0.15s; }
+  .checkin-footer { display: flex; justify-content: center; margin-top: 14px; }
 
-  .section-label { font-size:0.58rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin:20px 0 10px; }
+  /* ── Suggest ── */
+  .suggest-eyebrow { font-size: 0.78rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 18px; }
+  .suggest-card { border-radius: 28px; padding: 44px 32px; text-align: center; margin-bottom: 20px; }
+  .suggest-area { font-size: 2.8rem; font-weight: 900; color: white; letter-spacing: -0.03em; margin-bottom: 8px; }
+  .suggest-why { font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.75); }
 
-  .area-pick-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
-  .area-pick-btn { padding:7px 12px; background:transparent; border:1px solid; font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.06em; cursor:pointer; transition:opacity 0.12s; }
-  .area-pick-btn:hover { opacity:0.7; }
-  .area-pick-btn.active-pick { opacity:1; }
+  /* ── Energy ── */
+  .energy-opts { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .energy-opt { padding: 18px 20px; background: var(--surface); border: 2.5px solid var(--border); border-radius: 18px; text-align: left; cursor: pointer; transition: all 0.15s; font-family: 'Nunito', sans-serif; }
+  .energy-opt:hover { border-color: var(--primary); }
+  .energy-opt-label { font-size: 1rem; font-weight: 800; color: var(--text); }
+  .energy-opt-desc { font-size: 0.82rem; color: var(--muted); margin-top: 2px; font-weight: 600; }
 
-  .settings-link { text-align:center; margin-top:20px; display:flex; gap:16px; justify-content:center; }
-  .settings-link button { background:none; border:none; color:var(--muted); font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; text-decoration:underline; }
-  .settings-link button:hover { color:var(--accent); }
+  /* ── Activity ── */
+  .activity-tag { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 50px; font-size: 0.78rem; font-weight: 800; color: white; margin-bottom: 20px; letter-spacing: 0.02em; }
+  .activity-card { background: var(--surface); border-radius: 24px; padding: 32px 26px; margin-bottom: 24px; box-shadow: 0 4px 28px rgba(0,0,0,0.07); }
+  .activity-text { font-size: 1.2rem; font-weight: 700; line-height: 1.55; color: var(--text); }
+  .activity-minor { display: flex; gap: 10px; }
+  .btn-half { flex: 1; padding: 14px; background: transparent; border: 2.5px solid var(--border); border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 800; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+  .btn-half:hover { border-color: var(--muted); color: var(--text); }
 
-  .manage-header { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
-  .back-btn { background:none; border:none; color:var(--muted); font-family:'DM Mono',monospace; font-size:0.7rem; cursor:pointer; padding:0; }
-  .back-btn:hover { color:var(--accent); }
-  .manage-title { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:400; }
-  .manage-area-block { margin-bottom:28px; }
-  .manage-area-label { font-size:0.62rem; letter-spacing:0.16em; text-transform:uppercase; margin-bottom:8px; padding-bottom:6px; border-bottom:1px solid var(--border); }
-  .manage-item { display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid rgba(26,58,92,0.5); }
-  .manage-item-text { flex:1; font-size:0.7rem; color:var(--text); line-height:1.4; }
-  .manage-item-energy { font-size:0.55rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); flex-shrink:0; width:44px; }
-  .manage-delete-btn { background:none; border:none; color:var(--border); cursor:pointer; font-size:1rem; padding:2px 6px; flex-shrink:0; transition:color 0.15s; }
-  .manage-delete-btn:hover { color:#ff3d7f; }
-  .manage-custom-tag { font-size:0.5rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); border:1px solid var(--accent); padding:1px 4px; flex-shrink:0; }
-  .manage-empty { font-size:0.68rem; color:var(--muted); padding:12px 0; font-style:italic; }
-  .add-prompt { margin-top:16px; padding:16px; border:1px dashed var(--border); }
-  .add-prompt p { font-size:0.68rem; color:var(--muted); margin-bottom:12px; letter-spacing:0.04em; text-align:center; }
-  .add-input { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:0.78rem; padding:10px 12px; margin-bottom:8px; }
-  .add-input:focus { outline:1px solid var(--accent); }
-  .add-input::placeholder { color:var(--muted); }
-  .add-actions { display:flex; gap:6px; }
-  .add-save-btn { flex:1; padding:10px; background:var(--accent); color:#0a1628; border:none; font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; }
-  .add-cancel-btn { padding:10px 14px; background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem; cursor:pointer; }
-  .energy-pick-btn { flex:1; padding:8px; background:var(--surface); border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:all 0.12s; }
-  .energy-pick-btn.energy-selected { border-color:var(--accent); color:var(--accent); background:var(--accent-dim); }
+  /* ── Add own ── */
+  .add-own { background: var(--surface); border-radius: 20px; padding: 18px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+  .add-own-input { width: 100%; border: 2px solid var(--border); border-radius: 12px; padding: 12px 14px; font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--text); background: var(--bg); margin-bottom: 10px; }
+  .add-own-input:focus { outline: none; border-color: var(--primary); }
+  .add-own-row { display: flex; gap: 8px; }
+  .btn-add-save { flex: 1; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 800; cursor: pointer; }
+  .btn-add-cancel { padding: 12px 14px; background: transparent; border: 2px solid var(--border); border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 700; color: var(--muted); cursor: pointer; }
 
-  .loading { text-align:center; padding:40px 0; }
-  .loading p { font-size:0.7rem; color:var(--muted); letter-spacing:0.1em; animation:pulse 1.4s ease infinite; }
-  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
+  /* ── Settings ── */
+  .settings-head { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+  .settings-head-title { font-size: 1.4rem; font-weight: 800; }
+
+  /* ── All done ── */
+  .alldone-wrap { text-align: center; padding: 16px 0 32px; }
+  .alldone-icon { font-size: 3.5rem; margin-bottom: 20px; }
+  .alldone-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; letter-spacing: -0.02em; }
+  .alldone-sub { font-size: 0.9rem; color: var(--muted); line-height: 1.6; font-weight: 600; }
 </style>
 </head>
 <body>
 <div class="app">
   <div class="header">
     <h1>Compass</h1>
-    <p>What next</p>
-    <div class="header-version">v2</div>
+    <div class="version">v3</div>
   </div>
 
-  <div id="screen-loading" class="screen active">
-    <div class="loading"><p>Loading...</p></div>
-  </div>
+  <div id="screen-loading" class="screen active"></div>
 
+  <!-- First-time setup -->
   <div id="screen-setup" class="screen">
-    <p class="setup-intro">Set your priority for each day. You'll be asked every time you open the app.</p>
-    <div id="day-grid"></div>
-    <button class="setup-btn" onclick="saveSetup()">Let's go</button>
+    <div class="screen-title">One quick setup.</div>
+    <div class="screen-sub">Pick a focus for each day. You won't be asked again — change it anytime in settings.</div>
+    <div id="setup-grid"></div>
+    <button class="btn btn-primary" style="margin-top:28px" onclick="saveSetup()">I'm ready →</button>
   </div>
 
-  <div id="screen-q1" class="screen">
-    <div class="progress"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
-    <div class="q-label">01 / 03</div>
-    <div class="q-text">How's your energy right now?</div>
-    <div class="options">
-      <button class="option-btn" onclick="selectQ1(event,'low')">Low. I need something gentle.</button>
-      <button class="option-btn" onclick="selectQ1(event,'medium')">Medium. I can push a little.</button>
-      <button class="option-btn" onclick="selectQ1(event,'high')">High. I'm ready for something real.</button>
+  <!-- Daily check-in -->
+  <div id="screen-checkin" class="screen">
+    <div class="checkin-day" id="checkin-day"></div>
+    <div class="screen-title">What have you covered today?</div>
+    <div class="area-chips" id="area-chips"></div>
+    <button class="btn btn-primary" onclick="goToSuggest()">What's next →</button>
+    <div class="checkin-footer">
+      <button class="btn-ghost" onclick="goToSettings()">⚙ Settings</button>
     </div>
   </div>
 
-  <div id="screen-q2" class="screen">
-    <div class="progress"><div class="dot done"></div><div class="dot active"></div><div class="dot"></div></div>
-    <div class="q-label">02 / 03</div>
-    <div class="q-text">What have you already done today?</div>
-    <p class="q-sub">Tap anything that applies.</p>
-    <div class="done-grid" id="done-grid"></div>
-    <button class="next-btn" onclick="goToQ3()">Continue</button>
+  <!-- Suggestion -->
+  <div id="screen-suggest" class="screen">
+    <div class="suggest-eyebrow">How about…</div>
+    <div class="suggest-card" id="suggest-card">
+      <div class="suggest-area" id="suggest-name"></div>
+      <div class="suggest-why" id="suggest-why"></div>
+    </div>
+    <button class="btn btn-primary" onclick="agreeArea()">Yes, let's go →</button>
+    <button class="btn btn-outline" onclick="declineArea()">Something else</button>
   </div>
 
-  <div id="screen-q3" class="screen">
-    <div class="progress"><div class="dot done"></div><div class="dot done"></div><div class="dot active"></div></div>
-    <div class="q-label">03 / 03</div>
-    <div class="q-text">Today's priority is <em id="q3-priority"></em>. Does that feel right?</div>
-    <div class="options">
-      <button class="option-btn" onclick="selectQ3(event,'yes')">Yes, go with that.</button>
-      <button class="option-btn" onclick="selectQ3(event,'no')">No, let me choose.</button>
-    </div>
-    <div id="override-options" style="display:none;margin-top:12px;">
-      <div class="options" id="override-list"></div>
-    </div>
-  </div>
-
-  <div id="screen-result" class="screen">
-    <div id="result-wrap"></div>
-    <div class="settings-link">
-      <button onclick="goToSetup()">Change priorities</button>
-      <button onclick="goToManage()">Manage activities</button>
-      <button onclick="startOver()">Start over</button>
+  <!-- Energy -->
+  <div id="screen-energy" class="screen">
+    <div class="screen-title">How's your energy?</div>
+    <div class="screen-sub">Be honest — it shapes what I suggest.</div>
+    <div class="energy-opts">
+      <button class="energy-opt" onclick="selectEnergy('low')">
+        <div class="energy-opt-label">Low</div>
+        <div class="energy-opt-desc">Keep it gentle today</div>
+      </button>
+      <button class="energy-opt" onclick="selectEnergy('medium')">
+        <div class="energy-opt-label">Medium</div>
+        <div class="energy-opt-desc">Ready to push a little</div>
+      </button>
+      <button class="energy-opt" onclick="selectEnergy('high')">
+        <div class="energy-opt-label">High</div>
+        <div class="energy-opt-desc">Bring something real</div>
+      </button>
     </div>
   </div>
 
-  <div id="screen-manage" class="screen">
-    <div class="manage-header">
-      <button class="back-btn" onclick="showScreen('result')">← Back</button>
-      <div class="manage-title">Your activities</div>
+  <!-- Activity -->
+  <div id="screen-activity" class="screen">
+    <div class="activity-tag" id="activity-tag"></div>
+    <div class="activity-card">
+      <div class="activity-text" id="activity-text"></div>
     </div>
-    <div id="manage-content"></div>
+    <div id="add-own-wrap"></div>
+    <button class="btn btn-primary" onclick="markDone()" style="margin-bottom:10px">Done ✓</button>
+    <div class="activity-minor">
+      <button class="btn-half" onclick="nextIdea()">Next idea</button>
+      <button class="btn-half" onclick="showAddOwn()">Add my own</button>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div id="screen-settings" class="screen">
+    <div class="settings-head">
+      <button class="btn-ghost" onclick="showScreen('checkin')">←</button>
+      <div class="settings-head-title">Priorities</div>
+    </div>
+    <div id="settings-grid"></div>
+    <button class="btn btn-primary" style="margin-top:28px" onclick="saveSettings()">Save →</button>
+  </div>
+
+  <!-- All done -->
+  <div id="screen-alldone" class="screen">
+    <div class="alldone-wrap">
+      <div class="alldone-icon">🌟</div>
+      <div class="alldone-title">You've done it all.</div>
+      <div class="alldone-sub">Every area covered today. Time to rest and let it settle.</div>
+    </div>
+    <button class="btn btn-primary" onclick="backToCheckin()">Back to today</button>
   </div>
 </div>
 
 <script>
 const AREAS = [
-  {id:'build',    label:'Build',    color:'var(--build)'},
-  {id:'move',     label:'Move',     color:'var(--move)'},
-  {id:'connect',  label:'Connect',  color:'var(--connect)'},
-  {id:'learn',    label:'Learn',    color:'var(--learn)'},
-  {id:'consume',  label:'Consume',  color:'var(--consume)'},
-  {id:'explore',  label:'Explore',  color:'var(--explore)'},
-  {id:'stillness',label:'Stillness',color:'var(--stillness)'}
+  { id:'build',     label:'Build',     color:'#FF6040' },
+  { id:'move',      label:'Move',      color:'#FF3D7F' },
+  { id:'connect',   label:'Connect',   color:'#FFB020' },
+  { id:'learn',     label:'Learn',     color:'#3DBF7A' },
+  { id:'consume',   label:'Consume',   color:'#9C6ADE' },
+  { id:'explore',   label:'Explore',   color:'#00BFA5' },
+  { id:'stillness', label:'Stillness', color:'#5C9BE8' },
 ];
 
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const DEFAULT_PRIORITIES = ['build','build','build','connect','learn','explore','stillness'];
 
-const DEFAULT_ACTIVITIES = {
+const ACTIVITIES = {
   build:{
-    low:   ['Tidy up a doc or file you\'ve been meaning to sort','Review a project and write one honest note to yourself'],
-    medium:['Work on a client deliverable for 90 minutes','Write something, even a few paragraphs','Develop a small idea into a plan'],
-    high:  ['Deep work block, two hours, no interruptions','Build or ship something concrete','Write a proper draft of something that matters']
+    low:[
+      'Tidy up one doc or file you\'ve been avoiding',
+      'Write one honest note to yourself about a project',
+      'Review your task list and delete anything that no longer matters',
+      'Sketch out the next step on something stalled — just the next step',
+    ],
+    medium:[
+      '90 minutes on a client deliverable',
+      'Write something — even a few paragraphs',
+      'Turn a rough idea into a real plan',
+      'Clear your inbox down to zero and action anything under two minutes',
+      'Record a voice memo walking through a problem you\'re stuck on',
+      'Rewrite something you\'ve already written and make it sharper',
+    ],
+    high:[
+      'Two hours of deep work, no interruptions',
+      'Build or ship something concrete',
+      'Write a proper draft of something that matters',
+      'Sit down with the hardest thing on your list and don\'t stop until it\'s done',
+      'Do the thing you\'ve been putting off for more than a week',
+      'Plan the next month — projects, priorities, what you\'re saying no to',
+    ]
   },
   move:{
-    low:   ['A slow walk, no destination','Stretch for 15 minutes','Get outside, even briefly'],
-    medium:['A solid walk with a podcast','Cycle somewhere','Swim or gym at your own pace'],
-    high:  ['Run','Hard gym session','Long hike or bike ride']
+    low:[
+      'A slow walk with nowhere to be',
+      '15 minutes of stretching',
+      'Get outside, even just briefly',
+      'A gentle yoga flow or body scan',
+      'Walk to get a coffee somewhere slightly further than usual',
+      'Stand up, move around, shake it off',
+    ],
+    medium:[
+      'A solid walk with a podcast',
+      'Cycle somewhere',
+      'Swim or gym at your own pace',
+      'A 30-minute circuit at home',
+      'A brisk walk somewhere with good views',
+      'Play something — a sport, a game, anything active',
+    ],
+    high:[
+      'Go for a run',
+      'A hard gym session',
+      'A long hike or bike ride',
+      'Push yourself in whatever way you haven\'t in a while',
+      'A swim — long, steady, focused',
+      'Sign up for something physical and train towards it today',
+    ]
   },
   connect:{
-    low:   ['Send a message to someone you\'ve been meaning to reach','Voice note a friend','Browse and reach out to one person on LinkedIn'],
-    medium:['Call someone properly, not just a check-in','Suggest a plan to someone for this week','Go somewhere you might bump into people'],
-    high:  ['Make a dinner plan for tonight','Reach out to three people you\'ve lost touch with','Go to an event or somewhere social']
+    low:[
+      'Send a message to someone you\'ve been meaning to reach',
+      'A voice note to a friend',
+      'Leave a genuine comment or note for someone whose work you admire',
+      'Write a short email you\'ve been putting off',
+    ],
+    medium:[
+      'Call someone properly — not just a check-in',
+      'Suggest a plan to someone this week',
+      'Go somewhere you might bump into people',
+      'Have a real conversation with someone you haven\'t spoken to properly in a while',
+    ],
+    high:[
+      'Make a dinner plan for tonight',
+      'Reach out to three people you\'ve lost touch with',
+      'Go to an event, a talk, or somewhere with people you don\'t know',
+      'Set up something social for the week — a plan, not an intention',
+    ]
   },
   learn:{
-    low:   ['20 minutes of Russian, no pressure','Read one article slowly and take a note','Watch a lecture or talk you\'ve saved'],
-    medium:['Russian for 45 minutes with real focus','Read a chapter and write a short reflection','Go deep on one topic you\'re curious about'],
-    high:  ['A proper study session, two hours, one subject','Work through something hard and uncomfortable','Research something and produce a summary']
+    low:[
+      '20 minutes of something you\'re studying, no pressure',
+      'Read one article and take a single note',
+      'Watch a short talk or lecture on something you\'re curious about',
+      'Listen to an educational podcast on a walk',
+    ],
+    medium:[
+      '45 minutes of focused study',
+      'Read a chapter and write a short reflection',
+      'Go deep on one topic you\'ve been circling for a while',
+      'Find three good sources on something you don\'t understand well enough',
+    ],
+    high:[
+      'A proper two-hour study block on one subject',
+      'Work through something genuinely difficult',
+      'Research something properly and write up what you find',
+      'Take a course module or lesson and do the exercises, not just the watching',
+    ]
   },
   consume:{
-    low:   ['Read history for an hour','A documentary you\'ve been saving','A podcast walk'],
-    medium:['Read for two hours uninterrupted','Watch something genuinely good','Work through a long-form article or essay'],
-    high:  ['Finish a book','A film you\'ve been putting off','A proper reading afternoon']
+    low:[
+      'Read for an hour',
+      'A documentary you\'ve been saving',
+      'A podcast walk',
+      'Catch up on a newsletter or long-form piece you\'ve had open for days',
+    ],
+    medium:[
+      'Two hours of reading, uninterrupted',
+      'Something genuinely good to watch',
+      'Work through a long essay or piece of journalism slowly',
+      'Listen to an album properly — no other screen, start to finish',
+    ],
+    high:[
+      'Finish a book',
+      'A film you\'ve been putting off',
+      'A proper reading afternoon',
+      'Watch a series of talks or a documentary series on something that matters to you',
+    ]
   },
   explore:{
-    low:   ['Walk a street you don\'t usually take','Find one new café or spot nearby','Look up something happening in the city this week'],
-    medium:['Go to a neighbourhood you haven\'t visited in a while','Visit a gallery, market, or local event','Have lunch somewhere completely new'],
-    high:  ['A proper day out with no agenda','Drive somewhere and see what you find','Plan a short trip for next week']
+    low:[
+      'Walk a street you don\'t usually take',
+      'Find one new café or spot nearby',
+      'Look up what\'s happening in your city this week',
+      'Pick a place on a map you\'ve never been and figure out how to get there',
+    ],
+    medium:[
+      'Visit a neighbourhood you haven\'t been to in a while',
+      'A gallery, market, or local event',
+      'Have lunch somewhere completely new',
+      'Get on a bus or train without a plan and see where it takes you',
+    ],
+    high:[
+      'A full day out with no agenda',
+      'Drive somewhere and see what you find',
+      'Plan a short trip for next week and actually book something',
+      'Spend the day in a part of the city you\'ve always meant to explore properly',
+    ]
   },
   stillness:{
-    low:   ['Sit with a coffee and do nothing for 20 minutes','A short meditation, even 10 minutes','Journal, no prompt needed'],
-    medium:['A longer meditation sit, 20-30 minutes','Write freely in a journal for 30 minutes','Lie down and listen to music with your eyes closed'],
-    high:  ['A full morning of quiet and slowness','A long bath with a book and nowhere to be','A walk with no podcast, just thinking']
+    low:[
+      'Sit with a coffee and do nothing for 20 minutes',
+      'A short meditation — even 10 minutes',
+      'Journal without a prompt — just write whatever comes',
+      'Lie down and breathe properly for 10 minutes',
+    ],
+    medium:[
+      'A 20–30 minute meditation',
+      'Write freely in a journal for 30 minutes',
+      'Lie down and listen to music with your eyes closed',
+      'A slow walk with no podcast — just you and your thoughts',
+    ],
+    high:[
+      'A full morning of quiet',
+      'A long bath with a book and nowhere to be',
+      'A day with no agenda, no plans, no optimising',
+      'Turn everything off for a few hours and just exist',
+    ]
   }
 };
 
+// ── State ────────────────────────────────────────────────────
+
+let priorities = [...DEFAULT_PRIORITIES];
+let today = { date: '', done: [] };
+let session = { declined: [], area: null, energy: null, idx: 0, custom: null };
 let customActivities = {};
-let state = {
-  priorities: [...DEFAULT_PRIORITIES],
-  energy: null,
-  doneSections: [],
-  finalArea: null,
-  overrideNote: ''
-};
 
-// slots: main, move, stillness, other — each is { areaId, pool, idx } or null
-let slots = {};
+// ── Storage ──────────────────────────────────────────────────
 
-// ── Persistence ──────────────────────────────────────────────
+function todayStr() { return new Date().toISOString().slice(0, 10); }
+function todayDayIdx() { return (new Date().getDay() + 6) % 7; }
 
-function loadPriorities() {
+function load() {
+  try { const p = localStorage.getItem('compass-priorities-v1'); if (p) priorities = JSON.parse(p); } catch(e) {}
+
   try {
-    const saved = localStorage.getItem('compass-priorities-v1');
-    if (saved) { state.priorities = JSON.parse(saved); return true; }
-  } catch(e) {}
-  return false;
-}
+    const t = localStorage.getItem('compass-today-v3');
+    if (t) { const d = JSON.parse(t); today = d.date === todayStr() ? d : { date: todayStr(), done: [] }; }
+    else today = { date: todayStr(), done: [] };
+  } catch(e) { today = { date: todayStr(), done: [] }; }
 
-function savePriorities() {
-  try { localStorage.setItem('compass-priorities-v1', JSON.stringify(state.priorities)); } catch(e) {}
-}
-
-function loadCustomActivities() {
-  try {
-    const saved = localStorage.getItem('compass-custom-v1');
-    if (saved) customActivities = JSON.parse(saved);
-  } catch(e) { customActivities = {}; }
+  try { const c = localStorage.getItem('compass-custom-v1'); if (c) customActivities = JSON.parse(c); } catch(e) {}
   AREAS.forEach(a => {
-    if (!customActivities[a.id]) customActivities[a.id] = {low:[],medium:[],high:[]};
-    ['low','medium','high'].forEach(l => {
-      if (!customActivities[a.id][l]) customActivities[a.id][l] = [];
-    });
+    if (!customActivities[a.id]) customActivities[a.id] = { low:[], medium:[], high:[] };
+    ['low','medium','high'].forEach(l => { if (!customActivities[a.id][l]) customActivities[a.id][l] = []; });
   });
 }
 
-function saveCustomActivities() {
-  try { localStorage.setItem('compass-custom-v1', JSON.stringify(customActivities)); } catch(e) {}
-}
+function savePriorities() { try { localStorage.setItem('compass-priorities-v1', JSON.stringify(priorities)); } catch(e) {} }
+function saveToday()      { try { localStorage.setItem('compass-today-v3', JSON.stringify(today)); } catch(e) {} }
+function saveCustom()     { try { localStorage.setItem('compass-custom-v1', JSON.stringify(customActivities)); } catch(e) {} }
+function hasPriorities()  { try { return !!localStorage.getItem('compass-priorities-v1'); } catch(e) { return false; } }
 
 // ── Init ─────────────────────────────────────────────────────
 
 function init() {
-  loadCustomActivities();
-  const hasPriorities = loadPriorities();
-  buildSetup();
-  showScreen(hasPriorities ? 'q1' : 'setup');
+  load();
+  if (!hasPriorities()) { buildGrid('setup-grid'); showScreen('setup'); }
+  else { buildCheckin(); showScreen('checkin'); }
 }
 
-// ── Setup ────────────────────────────────────────────────────
+// ── Grid (shared by setup + settings) ───────────────────────
 
-function buildSetup() {
-  const grid = document.getElementById('day-grid');
-  grid.innerHTML = '';
+function buildGrid(id) {
+  const el = document.getElementById(id);
+  el.innerHTML = '';
   DAYS.forEach((day, i) => {
     const row = document.createElement('div');
     row.className = 'day-row';
-    const lbl = document.createElement('div');
-    lbl.className = 'day-label';
-    lbl.textContent = day.slice(0,3);
-    const sel = document.createElement('select');
-    sel.className = 'day-select';
-    AREAS.forEach(a => {
-      const opt = document.createElement('option');
-      opt.value = a.id;
-      opt.textContent = a.label;
-      if (a.id === state.priorities[i]) opt.selected = true;
-      sel.appendChild(opt);
-    });
-    row.appendChild(lbl);
-    row.appendChild(sel);
-    grid.appendChild(row);
+    row.innerHTML = `
+      <div class="day-label">${day.slice(0,3)}</div>
+      <select class="day-select" id="${id}-${i}">
+        ${AREAS.map(a => `<option value="${a.id}"${a.id === priorities[i] ? ' selected' : ''}>${a.label}</option>`).join('')}
+      </select>`;
+    el.appendChild(row);
   });
 }
 
-function saveSetup() {
-  document.querySelectorAll('.day-select').forEach((s,i) => { state.priorities[i] = s.value; });
-  savePriorities();
-  showScreen('q1');
-}
+function readGrid(id) { return DAYS.map((_, i) => document.getElementById(`${id}-${i}`).value); }
 
-function goToSetup() { buildSetup(); showScreen('setup'); }
+function saveSetup() { priorities = readGrid('setup-grid'); savePriorities(); buildCheckin(); showScreen('checkin'); }
 
-// ── Q1 ───────────────────────────────────────────────────────
+// ── Check-in ─────────────────────────────────────────────────
 
-function selectQ1(e, energy) {
-  state.energy = energy;
-  document.querySelectorAll('#screen-q1 .option-btn').forEach(b => b.classList.remove('selected'));
-  e.target.classList.add('selected');
-  setTimeout(() => { buildDoneGrid(); showScreen('q2'); }, 280);
-}
+function buildCheckin() {
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  document.getElementById('checkin-day').textContent = days[new Date().getDay()];
 
-// ── Q2 ───────────────────────────────────────────────────────
-
-function buildDoneGrid() {
-  const grid = document.getElementById('done-grid');
-  grid.innerHTML = '';
-  state.doneSections = [];
-  AREAS.forEach(a => {
-    const btn = document.createElement('button');
-    btn.className = 'done-btn';
-    btn.textContent = a.label;
-    btn.onclick = () => {
-      btn.classList.toggle('selected');
-      if (btn.classList.contains('selected')) state.doneSections.push(a.id);
-      else state.doneSections = state.doneSections.filter(x => x !== a.id);
-    };
-    grid.appendChild(btn);
-  });
-}
-
-// ── Q3 ───────────────────────────────────────────────────────
-
-function goToQ3() {
-  const idx = (new Date().getDay() + 6) % 7;
-  const area = AREAS.find(a => a.id === state.priorities[idx]);
-  document.getElementById('q3-priority').textContent = area.label;
-  document.getElementById('override-options').style.display = 'none';
-  showScreen('q3');
-}
-
-function selectQ3(e, choice) {
-  document.querySelectorAll('#screen-q3 .option-btn').forEach(b => b.classList.remove('selected'));
-  e.target.classList.add('selected');
-  if (choice === 'yes') {
-    const idx = (new Date().getDay() + 6) % 7;
-    state.finalArea = state.priorities[idx];
-    setTimeout(showResult, 280);
-  } else {
-    const div = document.getElementById('override-options');
-    const list = document.getElementById('override-list');
-    list.innerHTML = '';
-    AREAS.forEach(a => {
-      const btn = document.createElement('button');
-      btn.className = 'option-btn';
-      btn.textContent = a.label;
-      btn.onclick = () => { state.finalArea = a.id; setTimeout(showResult, 280); };
-      list.appendChild(btn);
-    });
-    div.style.display = 'block';
-  }
-}
-
-// ── Result ───────────────────────────────────────────────────
-
-function getAllActivities(areaId, energy) {
-  const defaults = DEFAULT_ACTIVITIES[areaId][energy] || [];
-  const customs  = (customActivities[areaId] && customActivities[areaId][energy]) || [];
-  return [
-    ...defaults.map(t => ({text:t, custom:false})),
-    ...customs.map(c => ({text:c.text, custom:true, id:c.id}))
-  ];
-}
-
-function makeSlot(areaId) {
-  const pool = getAllActivities(areaId, state.energy);
-  const idx = pool.length ? Math.floor(Math.random() * pool.length) : 0;
-  return { areaId, pool, idx };
-}
-
-function showResult() {
-  let areaId = state.finalArea;
-  let overrideNote = '';
-  const HIGH_DEMAND = ['build','learn'];
-  const LOW_DEMAND  = ['stillness','consume','explore'];
-
-  if (state.energy === 'low' && HIGH_DEMAND.includes(areaId)) {
-    const available = LOW_DEMAND.filter(x => !state.doneSections.includes(x));
-    if (available.length) { areaId = available[0]; overrideNote = 'Priority adjusted for your energy level'; }
-  }
-
-  state.finalArea = areaId;
-  state.overrideNote = overrideNote;
-
-  slots.main      = makeSlot(areaId);
-  slots.move      = areaId !== 'move'      ? makeSlot('move')      : null;
-  slots.stillness = areaId !== 'stillness' ? makeSlot('stillness') : null;
-  slots.other     = null;
-
-  renderResult();
-  showScreen('result');
-}
-
-function shuffleSlot(name) {
-  const slot = slots[name];
-  if (!slot || !slot.pool.length) return;
-  slot.idx = (slot.idx + 1) % slot.pool.length;
-  renderResult();
-}
-
-function pickOtherArea(areaId) {
-  if (slots.other && slots.other.areaId === areaId) {
-    slots.other = null; // toggle off
-  } else {
-    slots.other = makeSlot(areaId);
-  }
-  renderResult();
-}
-
-function renderResult() {
-  const mainArea = AREAS.find(a => a.id === slots.main.areaId);
-  const mainText = slots.main.pool[slots.main.idx]?.text || 'Take a breath and decide.';
-
-  // "Other" area picker — exclude main, move, stillness
-  const excludeIds = new Set([slots.main.areaId, 'move', 'stillness']);
-  const pickableAreas = AREAS.filter(a => !excludeIds.has(a.id));
-
-  const mainCard = `
-    <div class="result-card primary" style="border-color:${mainArea.color}40">
-      <div class="result-card-header">
-        <div class="result-card-dot" style="background:${mainArea.color}"></div>
-        <div class="result-card-name" style="color:${mainArea.color}">${mainArea.label}</div>
-        <div class="result-card-badge">today</div>
-      </div>
-      ${state.overrideNote ? `<div class="result-card-note">${state.overrideNote}</div>` : ''}
-      <div class="result-card-activity">${mainText}</div>
-      <button class="shuffle-btn" onclick="shuffleSlot('main')">Different idea</button>
-    </div>
-  `;
-
-  const moveCard = slots.move ? (() => {
-    const t = slots.move.pool[slots.move.idx]?.text || 'Get moving.';
-    return `
-      <div class="result-card" style="border-color:var(--move)20">
-        <div class="result-card-header">
-          <div class="result-card-dot" style="background:var(--move)"></div>
-          <div class="result-card-name" style="color:var(--move)">Move</div>
-          <div class="result-card-badge">daily</div>
-        </div>
-        <div class="result-card-activity">${t}</div>
-        <button class="shuffle-btn" onclick="shuffleSlot('move')">Different idea</button>
-      </div>
-    `;
-  })() : '';
-
-  const stillnessCard = slots.stillness ? (() => {
-    const t = slots.stillness.pool[slots.stillness.idx]?.text || 'Find stillness.';
-    return `
-      <div class="result-card" style="border-color:var(--stillness)20">
-        <div class="result-card-header">
-          <div class="result-card-dot" style="background:var(--stillness)"></div>
-          <div class="result-card-name" style="color:var(--stillness)">Stillness</div>
-          <div class="result-card-badge">daily</div>
-        </div>
-        <div class="result-card-activity">${t}</div>
-        <button class="shuffle-btn" onclick="shuffleSlot('stillness')">Different idea</button>
-      </div>
-    `;
-  })() : '';
-
-  const pickerBtns = pickableAreas.map(a => {
-    const isActive = slots.other?.areaId === a.id;
-    return `<button class="area-pick-btn${isActive ? ' active-pick' : ''}" style="border-color:${a.color};color:${a.color}" onclick="pickOtherArea('${a.id}')">${a.label}</button>`;
-  }).join('');
-
-  const otherCard = slots.other ? (() => {
-    const otherArea = AREAS.find(a => a.id === slots.other.areaId);
-    const t = slots.other.pool[slots.other.idx]?.text || 'Take a breath.';
-    return `
-      <div class="result-card" style="border-color:${otherArea.color}40">
-        <div class="result-card-header">
-          <div class="result-card-dot" style="background:${otherArea.color}"></div>
-          <div class="result-card-name" style="color:${otherArea.color}">${otherArea.label}</div>
-        </div>
-        <div class="result-card-activity">${t}</div>
-        <button class="shuffle-btn" onclick="shuffleSlot('other')">Different idea</button>
-      </div>
-    `;
-  })() : '';
-
-  document.getElementById('result-wrap').innerHTML = `
-    ${mainCard}
-    <div class="section-label">Daily</div>
-    ${moveCard}
-    ${stillnessCard}
-    <div class="section-label">Want to do something else?</div>
-    <div class="area-pick-row">${pickerBtns}</div>
-    ${otherCard}
-  `;
-}
-
-// ── Other ────────────────────────────────────────────────────
-
-function startOver() {
-  state.energy = null; state.doneSections = []; state.finalArea = null;
-  state.overrideNote = ''; slots = {};
-  showScreen('q1');
-}
-
-function goToManage() { buildManage(); showScreen('manage'); }
-
-function buildManage() {
-  const content = document.getElementById('manage-content');
-  content.innerHTML = '';
+  const el = document.getElementById('area-chips');
+  el.innerHTML = '';
   AREAS.forEach(area => {
-    const block = document.createElement('div');
-    block.className = 'manage-area-block';
-    const lbl = document.createElement('div');
-    lbl.className = 'manage-area-label';
-    lbl.style.color = area.color;
-    lbl.textContent = area.label;
-    block.appendChild(lbl);
-
-    let hasCustom = false;
-    ['low','medium','high'].forEach(level => {
-      (customActivities[area.id][level] || []).forEach(act => {
-        hasCustom = true;
-        const item = document.createElement('div');
-        item.className = 'manage-item';
-        item.innerHTML = `
-          <div class="manage-item-text">${act.text}</div>
-          <div class="manage-item-energy">${level}</div>
-          <span class="manage-custom-tag">custom</span>
-          <button class="manage-delete-btn" data-area="${area.id}" data-level="${level}" data-id="${act.id}">×</button>
-        `;
-        block.appendChild(item);
-      });
-    });
-
-    if (!hasCustom) {
-      const empty = document.createElement('div');
-      empty.className = 'manage-empty';
-      empty.textContent = 'No custom activities yet.';
-      block.appendChild(empty);
-    }
-    content.appendChild(block);
+    const done = today.done.includes(area.id);
+    const chip = document.createElement('div');
+    chip.className = 'area-chip';
+    chip.dataset.id = area.id;
+    chip.innerHTML = `
+      <div class="chip-dot" style="background:${area.color}"></div>
+      <div class="chip-label">${area.label}</div>
+      <div class="chip-check" style="color:${area.color}">✓</div>`;
+    setChipState(chip, area, done);
+    chip.onclick = () => {
+      const idx = today.done.indexOf(area.id);
+      const nowDone = idx === -1;
+      if (nowDone) today.done.push(area.id); else today.done.splice(idx, 1);
+      saveToday();
+      setChipState(chip, area, nowDone);
+    };
+    el.appendChild(chip);
   });
-
-  content.onclick = (e) => {
-    if (!e.target.classList.contains('manage-delete-btn')) return;
-    const {area, level, id} = e.target.dataset;
-    customActivities[area][level] = customActivities[area][level].filter(a => a.id !== id);
-    saveCustomActivities();
-    buildManage();
-  };
 }
+
+function setChipState(chip, area, done) {
+  chip.querySelector('.chip-check').style.opacity = done ? '1' : '0';
+  chip.style.borderColor = done ? area.color : 'transparent';
+  chip.style.background = done ? hexAlpha(area.color, 0.08) : 'var(--surface)';
+}
+
+function hexAlpha(hex, a) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+// ── Suggest ──────────────────────────────────────────────────
+
+function goToSuggest() { session.declined = []; suggestNext(); }
+
+function nextArea() {
+  const main = priorities[todayDayIdx()];
+  const order = [main, 'move', 'stillness', ...AREAS.map(a => a.id).filter(id => id !== main && id !== 'move' && id !== 'stillness')];
+  return order.find(id => !today.done.includes(id) && !session.declined.includes(id)) || null;
+}
+
+function whyLabel(id) {
+  const main = priorities[todayDayIdx()];
+  if (id === main) return 'your focus for today';
+  if (id === 'move' || id === 'stillness') return 'a daily essential';
+  return "you haven't done this yet today";
+}
+
+function suggestNext() {
+  const id = nextArea();
+  if (!id) { showScreen('alldone'); return; }
+  session.area = id;
+  const area = AREAS.find(a => a.id === id);
+  document.getElementById('suggest-card').style.background = area.color;
+  document.getElementById('suggest-name').textContent = area.label;
+  document.getElementById('suggest-why').textContent = whyLabel(id);
+  showScreen('suggest');
+}
+
+function agreeArea() { showScreen('energy'); }
+
+function declineArea() { session.declined.push(session.area); suggestNext(); }
+
+// ── Energy ───────────────────────────────────────────────────
+
+function selectEnergy(level) {
+  session.energy = level;
+  session.custom = null;
+  const pool = getPool();
+  session.idx = Math.floor(Math.random() * Math.max(pool.length, 1));
+  renderActivity();
+  showScreen('activity');
+}
+
+// ── Activity ─────────────────────────────────────────────────
+
+function getPool() {
+  const defs = ACTIVITIES[session.area]?.[session.energy] || [];
+  const customs = customActivities[session.area]?.[session.energy]?.map(c => c.text) || [];
+  return [...defs, ...customs];
+}
+
+function renderActivity() {
+  const area = AREAS.find(a => a.id === session.area);
+  const tag = document.getElementById('activity-tag');
+  tag.style.background = area.color;
+  tag.textContent = area.label;
+
+  const pool = getPool();
+  const text = session.custom || pool[session.idx % Math.max(pool.length, 1)] || 'Take it easy.';
+  document.getElementById('activity-text').textContent = text;
+  document.getElementById('add-own-wrap').innerHTML = '';
+}
+
+function nextIdea() {
+  session.custom = null;
+  session.idx = (session.idx + 1) % Math.max(getPool().length, 1);
+  renderActivity();
+}
+
+function showAddOwn() {
+  document.getElementById('add-own-wrap').innerHTML = `
+    <div class="add-own">
+      <input class="add-own-input" id="own-input" placeholder="What do you actually want to do?" maxlength="120">
+      <div class="add-own-row">
+        <button class="btn-add-save" onclick="useOwn()">Use this</button>
+        <button class="btn-add-cancel" onclick="document.getElementById('add-own-wrap').innerHTML=''">Cancel</button>
+      </div>
+    </div>`;
+  document.getElementById('own-input').focus();
+}
+
+function useOwn() {
+  const val = document.getElementById('own-input')?.value.trim();
+  if (!val) return;
+  customActivities[session.area][session.energy].push({ text: val, id: Date.now().toString() });
+  saveCustom();
+  session.custom = val;
+  renderActivity();
+}
+
+function markDone() {
+  if (!today.done.includes(session.area)) { today.done.push(session.area); saveToday(); }
+  session.declined = []; session.area = null; session.energy = null; session.custom = null;
+  buildCheckin();
+  showScreen('checkin');
+}
+
+// ── Settings ─────────────────────────────────────────────────
+
+function goToSettings() { buildGrid('settings-grid'); showScreen('settings'); }
+function saveSettings() { priorities = readGrid('settings-grid'); savePriorities(); showScreen('checkin'); }
+
+// ── All done ─────────────────────────────────────────────────
+
+function backToCheckin() { buildCheckin(); showScreen('checkin'); }
+
+// ── Util ─────────────────────────────────────────────────────
 
 function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active', 'fade-in'));
   const el = document.getElementById('screen-' + name);
   el.classList.add('active');
-  el.classList.remove('fade-in');
   void el.offsetWidth;
   el.classList.add('fade-in');
 }
