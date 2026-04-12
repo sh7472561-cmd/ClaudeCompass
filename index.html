@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Compass</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
   :root {
     --bg: #FDF6EE;
@@ -149,6 +149,7 @@
 
   <!-- Energy -->
   <div id="screen-energy" class="screen">
+    <button class="btn-ghost" onclick="showScreen('suggest')" style="margin-bottom:20px">← Back</button>
     <div class="screen-title">How's your energy?</div>
     <div class="screen-sub">Be honest — it shapes what I suggest.</div>
     <div class="energy-opts">
@@ -178,6 +179,9 @@
     <div class="activity-minor">
       <button class="btn-half" onclick="nextIdea()">Next idea</button>
       <button class="btn-half" onclick="showAddOwn()">Add my own</button>
+    </div>
+    <div style="text-align:center;margin-top:14px">
+      <button class="btn-ghost" onclick="showScreen('energy')">← Change energy</button>
     </div>
   </div>
 
