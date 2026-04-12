@@ -493,8 +493,12 @@ function whyLabel(id) {
 }
 
 function suggestNext() {
-  const id = nextArea();
-  if (!id) { showScreen('alldone'); return; }
+  let id = nextArea();
+  if (!id) {
+    const available = AREAS.map(a => a.id).filter(id => !session.declined.includes(id));
+    const pool = available.length ? available : AREAS.map(a => a.id);
+    id = pool[Math.floor(Math.random() * pool.length)];
+  }
   session.area = id;
   const area = AREAS.find(a => a.id === id);
   document.getElementById('suggest-card').style.background = area.color;
