@@ -42,6 +42,7 @@
   .header { text-align: center; margin-bottom: 40px; }
   .header h1 { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 400; letter-spacing: -0.02em; }
   .header p { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 6px; }
+  .header-version { font-size: 0.55rem; color: var(--border); letter-spacing: 0.1em; margin-top: 4px; }
 
   .screen { display: none; }
   .screen.active { display: block; }
@@ -74,32 +75,24 @@
   .next-btn { width:100%; margin-top:20px; padding:14px; background:transparent; border:1px solid var(--accent); color:var(--accent); font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; transition:all 0.15s; }
   .next-btn:hover { background:var(--accent-dim); }
 
-  .result-wrap { text-align:center; padding:8px 0 24px; }
-  .result-dot { width:12px; height:12px; border-radius:50%; margin:0 auto 18px; }
-  .result-name { font-family:'Playfair Display',serif; font-size:3rem; font-weight:700; letter-spacing:-0.03em; line-height:1; margin-bottom:8px; }
-  .result-note { font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:28px; min-height:16px; }
-  .result-divider { width:40px; height:1px; background:var(--border); margin:0 auto 24px; }
-  .result-activity { font-family:'Playfair Display',serif; font-style:italic; font-size:1.2rem; line-height:1.5; margin-bottom:28px; padding:0 8px; min-height:60px; }
-  .daily-strip { display:flex; gap:8px; justify-content:center; margin-bottom:28px; }
-  .daily-pill { padding:6px 12px; border:1px solid var(--border); font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); }
-  .daily-pill span { color:var(--text); margin-left:4px; }
-  .result-actions { display:flex; gap:8px; margin-bottom:8px; }
-  .action-btn { flex:1; padding:13px; background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:all 0.15s; }
-  .action-btn:hover { border-color:var(--accent); color:var(--accent); }
-  .action-btn.primary { border-color:var(--accent); color:var(--accent); }
-  .action-btn.primary:hover { background:var(--accent-dim); }
+  /* Result screen */
+  .result-card { padding:18px; border:1px solid var(--border); margin-bottom:8px; }
+  .result-card-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .result-card-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .result-card-name { font-size:0.62rem; letter-spacing:0.16em; text-transform:uppercase; }
+  .result-card-badge { font-size:0.5rem; letter-spacing:0.1em; border:1px solid var(--border); color:var(--muted); padding:1px 5px; margin-left:auto; }
+  .result-card-activity { font-family:'Playfair Display',serif; font-style:italic; font-size:1.1rem; line-height:1.5; margin-bottom:12px; }
+  .result-card.primary .result-card-activity { font-size:1.25rem; }
+  .result-card-note { font-size:0.6rem; color:var(--muted); letter-spacing:0.08em; margin-bottom:10px; }
+  .shuffle-btn { background:none; border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; padding:6px 10px; cursor:pointer; transition:all 0.12s; }
+  .shuffle-btn:hover { border-color:var(--accent); color:var(--accent); }
 
-  .add-prompt { margin-top:16px; padding:16px; border:1px dashed var(--border); }
-  .add-prompt p { font-size:0.68rem; color:var(--muted); margin-bottom:12px; letter-spacing:0.04em; text-align:center; }
-  .add-input { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:0.78rem; padding:10px 12px; margin-bottom:8px; }
-  .add-input:focus { outline:1px solid var(--accent); }
-  .add-input::placeholder { color:var(--muted); }
-  .add-actions { display:flex; gap:6px; }
-  .add-save-btn { flex:1; padding:10px; background:var(--accent); color:#0a1628; border:none; font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; }
-  .add-cancel-btn { padding:10px 14px; background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem; cursor:pointer; }
-  .add-status { font-size:0.62rem; color:var(--accent); letter-spacing:0.08em; margin-top:8px; min-height:16px; text-align:center; }
-  .energy-pick-btn { flex:1; padding:8px; background:var(--surface); border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:all 0.12s; }
-  .energy-pick-btn.energy-selected { border-color:var(--accent); color:var(--accent); background:var(--accent-dim); }
+  .section-label { font-size:0.58rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin:20px 0 10px; }
+
+  .area-pick-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+  .area-pick-btn { padding:7px 12px; background:transparent; border:1px solid; font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.06em; cursor:pointer; transition:opacity 0.12s; }
+  .area-pick-btn:hover { opacity:0.7; }
+  .area-pick-btn.active-pick { opacity:1; }
 
   .settings-link { text-align:center; margin-top:20px; display:flex; gap:16px; justify-content:center; }
   .settings-link button { background:none; border:none; color:var(--muted); font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; text-decoration:underline; }
@@ -118,6 +111,16 @@
   .manage-delete-btn:hover { color:#ff3d7f; }
   .manage-custom-tag { font-size:0.5rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); border:1px solid var(--accent); padding:1px 4px; flex-shrink:0; }
   .manage-empty { font-size:0.68rem; color:var(--muted); padding:12px 0; font-style:italic; }
+  .add-prompt { margin-top:16px; padding:16px; border:1px dashed var(--border); }
+  .add-prompt p { font-size:0.68rem; color:var(--muted); margin-bottom:12px; letter-spacing:0.04em; text-align:center; }
+  .add-input { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:0.78rem; padding:10px 12px; margin-bottom:8px; }
+  .add-input:focus { outline:1px solid var(--accent); }
+  .add-input::placeholder { color:var(--muted); }
+  .add-actions { display:flex; gap:6px; }
+  .add-save-btn { flex:1; padding:10px; background:var(--accent); color:#0a1628; border:none; font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; }
+  .add-cancel-btn { padding:10px 14px; background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem; cursor:pointer; }
+  .energy-pick-btn { flex:1; padding:8px; background:var(--surface); border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:all 0.12s; }
+  .energy-pick-btn.energy-selected { border-color:var(--accent); color:var(--accent); background:var(--accent-dim); }
 
   .loading { text-align:center; padding:40px 0; }
   .loading p { font-size:0.7rem; color:var(--muted); letter-spacing:0.1em; animation:pulse 1.4s ease infinite; }
@@ -129,6 +132,7 @@
   <div class="header">
     <h1>Compass</h1>
     <p>What next</p>
+    <div class="header-version">v2</div>
   </div>
 
   <div id="screen-loading" class="screen active">
@@ -175,11 +179,11 @@
   </div>
 
   <div id="screen-result" class="screen">
-    <div class="result-wrap" id="result-wrap"></div>
-    <div id="add-prompt-wrap"></div>
+    <div id="result-wrap"></div>
     <div class="settings-link">
       <button onclick="goToSetup()">Change priorities</button>
       <button onclick="goToManage()">Manage activities</button>
+      <button onclick="startOver()">Start over</button>
     </div>
   </div>
 
@@ -250,9 +254,25 @@ let state = {
   energy: null,
   doneSections: [],
   finalArea: null,
-  currentActivity: null,
-  shuffleCount: 0
+  overrideNote: ''
 };
+
+// slots: main, move, stillness, other — each is { areaId, pool, idx } or null
+let slots = {};
+
+// ── Persistence ──────────────────────────────────────────────
+
+function loadPriorities() {
+  try {
+    const saved = localStorage.getItem('compass-priorities-v1');
+    if (saved) { state.priorities = JSON.parse(saved); return true; }
+  } catch(e) {}
+  return false;
+}
+
+function savePriorities() {
+  try { localStorage.setItem('compass-priorities-v1', JSON.stringify(state.priorities)); } catch(e) {}
+}
 
 function loadCustomActivities() {
   try {
@@ -271,11 +291,16 @@ function saveCustomActivities() {
   try { localStorage.setItem('compass-custom-v1', JSON.stringify(customActivities)); } catch(e) {}
 }
 
+// ── Init ─────────────────────────────────────────────────────
+
 function init() {
   loadCustomActivities();
+  const hasPriorities = loadPriorities();
   buildSetup();
-  showScreen('setup');
+  showScreen(hasPriorities ? 'q1' : 'setup');
 }
+
+// ── Setup ────────────────────────────────────────────────────
 
 function buildSetup() {
   const grid = document.getElementById('day-grid');
@@ -303,10 +328,13 @@ function buildSetup() {
 
 function saveSetup() {
   document.querySelectorAll('.day-select').forEach((s,i) => { state.priorities[i] = s.value; });
+  savePriorities();
   showScreen('q1');
 }
 
 function goToSetup() { buildSetup(); showScreen('setup'); }
+
+// ── Q1 ───────────────────────────────────────────────────────
 
 function selectQ1(e, energy) {
   state.energy = energy;
@@ -314,6 +342,8 @@ function selectQ1(e, energy) {
   e.target.classList.add('selected');
   setTimeout(() => { buildDoneGrid(); showScreen('q2'); }, 280);
 }
+
+// ── Q2 ───────────────────────────────────────────────────────
 
 function buildDoneGrid() {
   const grid = document.getElementById('done-grid');
@@ -331,6 +361,8 @@ function buildDoneGrid() {
     grid.appendChild(btn);
   });
 }
+
+// ── Q3 ───────────────────────────────────────────────────────
 
 function goToQ3() {
   const idx = (new Date().getDay() + 6) % 7;
@@ -362,6 +394,8 @@ function selectQ3(e, choice) {
   }
 }
 
+// ── Result ───────────────────────────────────────────────────
+
 function getAllActivities(areaId, energy) {
   const defaults = DEFAULT_ACTIVITIES[areaId][energy] || [];
   const customs  = (customActivities[areaId] && customActivities[areaId][energy]) || [];
@@ -369,6 +403,12 @@ function getAllActivities(areaId, energy) {
     ...defaults.map(t => ({text:t, custom:false})),
     ...customs.map(c => ({text:c.text, custom:true, id:c.id}))
   ];
+}
+
+function makeSlot(areaId) {
+  const pool = getAllActivities(areaId, state.energy);
+  const idx = pool.length ? Math.floor(Math.random() * pool.length) : 0;
+  return { areaId, pool, idx };
 }
 
 function showResult() {
@@ -383,96 +423,121 @@ function showResult() {
   }
 
   state.finalArea = areaId;
-  const pool = getAllActivities(areaId, state.energy);
-  const initialIdx = pool.length ? Math.floor(Math.random() * pool.length) : 0;
-  state.shuffleCount = initialIdx;
-  const picked = pool[initialIdx];
-  state.currentActivity = picked ? picked.text : 'Take a breath and decide.';
-  renderResult(areaId, overrideNote);
+  state.overrideNote = overrideNote;
+
+  slots.main      = makeSlot(areaId);
+  slots.move      = areaId !== 'move'      ? makeSlot('move')      : null;
+  slots.stillness = areaId !== 'stillness' ? makeSlot('stillness') : null;
+  slots.other     = null;
+
+  renderResult();
   showScreen('result');
 }
 
-function renderResult(areaId, overrideNote) {
-  const area = AREAS.find(a => a.id === areaId);
+function shuffleSlot(name) {
+  const slot = slots[name];
+  if (!slot || !slot.pool.length) return;
+  slot.idx = (slot.idx + 1) % slot.pool.length;
+  renderResult();
+}
+
+function pickOtherArea(areaId) {
+  if (slots.other && slots.other.areaId === areaId) {
+    slots.other = null; // toggle off
+  } else {
+    slots.other = makeSlot(areaId);
+  }
+  renderResult();
+}
+
+function renderResult() {
+  const mainArea = AREAS.find(a => a.id === slots.main.areaId);
+  const mainText = slots.main.pool[slots.main.idx]?.text || 'Take a breath and decide.';
+
+  // "Other" area picker — exclude main, move, stillness
+  const excludeIds = new Set([slots.main.areaId, 'move', 'stillness']);
+  const pickableAreas = AREAS.filter(a => !excludeIds.has(a.id));
+
+  const mainCard = `
+    <div class="result-card primary" style="border-color:${mainArea.color}40">
+      <div class="result-card-header">
+        <div class="result-card-dot" style="background:${mainArea.color}"></div>
+        <div class="result-card-name" style="color:${mainArea.color}">${mainArea.label}</div>
+        <div class="result-card-badge">today</div>
+      </div>
+      ${state.overrideNote ? `<div class="result-card-note">${state.overrideNote}</div>` : ''}
+      <div class="result-card-activity">${mainText}</div>
+      <button class="shuffle-btn" onclick="shuffleSlot('main')">Different idea</button>
+    </div>
+  `;
+
+  const moveCard = slots.move ? (() => {
+    const t = slots.move.pool[slots.move.idx]?.text || 'Get moving.';
+    return `
+      <div class="result-card" style="border-color:var(--move)20">
+        <div class="result-card-header">
+          <div class="result-card-dot" style="background:var(--move)"></div>
+          <div class="result-card-name" style="color:var(--move)">Move</div>
+          <div class="result-card-badge">daily</div>
+        </div>
+        <div class="result-card-activity">${t}</div>
+        <button class="shuffle-btn" onclick="shuffleSlot('move')">Different idea</button>
+      </div>
+    `;
+  })() : '';
+
+  const stillnessCard = slots.stillness ? (() => {
+    const t = slots.stillness.pool[slots.stillness.idx]?.text || 'Find stillness.';
+    return `
+      <div class="result-card" style="border-color:var(--stillness)20">
+        <div class="result-card-header">
+          <div class="result-card-dot" style="background:var(--stillness)"></div>
+          <div class="result-card-name" style="color:var(--stillness)">Stillness</div>
+          <div class="result-card-badge">daily</div>
+        </div>
+        <div class="result-card-activity">${t}</div>
+        <button class="shuffle-btn" onclick="shuffleSlot('stillness')">Different idea</button>
+      </div>
+    `;
+  })() : '';
+
+  const pickerBtns = pickableAreas.map(a => {
+    const isActive = slots.other?.areaId === a.id;
+    return `<button class="area-pick-btn${isActive ? ' active-pick' : ''}" style="border-color:${a.color};color:${a.color}" onclick="pickOtherArea('${a.id}')">${a.label}</button>`;
+  }).join('');
+
+  const otherCard = slots.other ? (() => {
+    const otherArea = AREAS.find(a => a.id === slots.other.areaId);
+    const t = slots.other.pool[slots.other.idx]?.text || 'Take a breath.';
+    return `
+      <div class="result-card" style="border-color:${otherArea.color}40">
+        <div class="result-card-header">
+          <div class="result-card-dot" style="background:${otherArea.color}"></div>
+          <div class="result-card-name" style="color:${otherArea.color}">${otherArea.label}</div>
+        </div>
+        <div class="result-card-activity">${t}</div>
+        <button class="shuffle-btn" onclick="shuffleSlot('other')">Different idea</button>
+      </div>
+    `;
+  })() : '';
+
   document.getElementById('result-wrap').innerHTML = `
-    <div class="result-dot" style="background:${area.color}"></div>
-    <div class="result-name" style="color:${area.color}">${area.label}</div>
-    <div class="result-note">${overrideNote || ''}</div>
-    <div class="result-divider"></div>
-    <div class="result-activity" id="result-activity-text">${state.currentActivity}</div>
-    <div class="daily-strip">
-      <div class="daily-pill">Move<span>daily</span></div>
-      <div class="daily-pill">Stillness<span>daily</span></div>
-    </div>
-    <div class="result-actions">
-      <button class="action-btn" onclick="startOver()">Start over</button>
-      <button class="action-btn" onclick="showAddPrompt()">Add activity</button>
-      <button class="action-btn primary" id="shuffle-btn" onclick="shuffleActivity()">Different idea</button>
-    </div>
-  `;
-  document.getElementById('add-prompt-wrap').innerHTML = '';
-}
-
-function shuffleActivity() {
-  const pool = getAllActivities(state.finalArea, state.energy);
-  if (!pool.length) return;
-  state.shuffleCount = (state.shuffleCount + 1) % pool.length;
-  const picked = pool[state.shuffleCount];
-  state.currentActivity = picked.text;
-  document.getElementById('result-activity-text').textContent = picked.text;
-  if (state.shuffleCount === 0) showAddPrompt();
-}
-
-let pendingLevel = 'medium';
-
-function showAddPrompt() {
-  pendingLevel = 'medium';
-  document.getElementById('add-prompt-wrap').innerHTML = `
-    <div class="add-prompt">
-      <p>Nothing feels right? Add your own.</p>
-      <input class="add-input" id="add-input" placeholder="What do you actually want to do?" maxlength="120" />
-      <div style="font-size:0.62rem;color:var(--muted);margin-bottom:8px;letter-spacing:0.08em;">Energy level</div>
-      <div style="display:flex;gap:6px;margin-bottom:10px;">
-        <button class="energy-pick-btn" onclick="selectEnergy(event,'low')">Low</button>
-        <button class="energy-pick-btn energy-selected" onclick="selectEnergy(event,'medium')">Medium</button>
-        <button class="energy-pick-btn" onclick="selectEnergy(event,'high')">High</button>
-      </div>
-      <div class="add-actions">
-        <button class="add-save-btn" onclick="saveCustomActivity()">Save & use it</button>
-        <button class="add-cancel-btn" onclick="cancelAdd()">Cancel</button>
-      </div>
-    </div>
+    ${mainCard}
+    <div class="section-label">Daily</div>
+    ${moveCard}
+    ${stillnessCard}
+    <div class="section-label">Want to do something else?</div>
+    <div class="area-pick-row">${pickerBtns}</div>
+    ${otherCard}
   `;
 }
 
-function selectEnergy(e, level) {
-  pendingLevel = level;
-  document.querySelectorAll('.energy-pick-btn').forEach(b => b.classList.remove('energy-selected'));
-  e.target.classList.add('energy-selected');
-}
-
-function saveCustomActivity() {
-  const input = document.getElementById('add-input');
-  const text = input ? input.value.trim() : '';
-  if (!text) return;
-  const id = Date.now().toString();
-  customActivities[state.finalArea][pendingLevel].push({text, id});
-  saveCustomActivities();
-  state.currentActivity = text;
-  const actEl = document.getElementById('result-activity-text');
-  if (actEl) actEl.textContent = text;
-  document.getElementById('add-prompt-wrap').innerHTML = '';
-}
-
-function cancelAdd() {
-  document.getElementById('add-prompt-wrap').innerHTML = '';
-}
+// ── Other ────────────────────────────────────────────────────
 
 function startOver() {
   state.energy = null; state.doneSections = []; state.finalArea = null;
-  state.currentActivity = null; state.shuffleCount = 0;
-  buildSetup();
-  showScreen('setup');
+  state.overrideNote = ''; slots = {};
+  showScreen('q1');
 }
 
 function goToManage() { buildManage(); showScreen('manage'); }
